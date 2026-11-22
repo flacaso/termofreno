@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="es" data-tema="noche">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Termofreno - Tablero de camión</title>
+<style>
+/* Escenario fijo de 1024 px de ancho que se escala solo para caber en cualquier pantalla (1024x640, 960x600, 1280x800...) */
+:root{--bg:#0b0d10;--pn:#14171c;--ky:#1e232a;--ky2:#2a3039;--ed:#2d333c;--tx:#cfd5de;--mu:#7d8796;--bl:#ffb74d;--green:#4fe08a;--amber:#ffb02e;--red:#ff5a4f;--blue:#5aa8ff;--cyan:#4fd8e8}
+:root[data-tema=dia]{--bg:#9aa1ab;--pn:#2c3037;--ky:#3b414a;--ky2:#4b525d;--ed:#555d69;--tx:#f1f4f8;--mu:#b4bcc8;--bl:#ffffff}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg)}
+body{color:var(--tx);font:14px/1.2 sans-serif;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
+#stage{position:absolute;left:0;top:0;width:1024px;box-sizing:border-box;padding:6px 8px;-webkit-transform-origin:0 0;transform-origin:0 0}
+button{font:inherit;color:inherit;border:0;margin:0;padding:0;background:none;outline:0;text-align:left;cursor:pointer;-webkit-appearance:none}
+svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* barra superior */
+header{display:flex;align-items:center;justify-content:space-between;height:44px;margin-bottom:6px}
+#pz,.hr{flex:1 1 0}
+.hr{display:flex;justify-content:flex-end}.hr>*{margin-left:8px}
+.pau{display:flex;align-items:center;width:max-content;height:44px;padding:0 16px;border-radius:10px;background:var(--ky);border:2px solid var(--ed);color:var(--red);font-weight:bold;letter-spacing:.06em;text-transform:uppercase;box-sizing:border-box}
+.pau svg{width:22px;height:22px;margin-right:8px}
+.pau:active{background:var(--ky2)}
+.pill{display:flex;align-items:center;padding:7px 16px;border-radius:99px;background:var(--pn);border:1px solid var(--ed);font-weight:bold;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.pill i{width:10px;height:10px;border-radius:50%;background:var(--c,var(--mu));margin-right:8px}
+.hb{width:44px;height:44px;border-radius:10px;background:var(--ky);border:2px solid var(--ed);display:flex;align-items:center;justify-content:center;color:var(--tx);box-sizing:border-box}
+.hb svg{width:22px;height:22px}
+
+/* cuadro de instrumentos */
+.cl{background:#07080a;border:3px solid var(--ed);border-radius:18px;padding:5px 12px 3px;margin-bottom:6px;color:var(--bl)}
+.cr{display:flex;align-items:center;justify-content:space-between}
+.gw{position:relative;width:160px;flex:none}
+.gw svg{display:block;width:100%;height:auto;stroke-width:1}
+.gf{fill:#0c0e12;stroke:#2a2f38;stroke-width:3}
+.tk{stroke:var(--bl);fill:none}
+.lb{fill:var(--bl);font:bold 12px sans-serif}
+.lm{fill:#7d8796;font:bold 9px sans-serif;letter-spacing:1px}
+.hub{fill:#1b1f26;stroke:#3a414c;stroke-width:2}
+.nv{position:absolute;top:0;left:0;width:100%;height:100%;-webkit-will-change:transform;will-change:transform;-webkit-transition:-webkit-transform .35s linear;transition:transform .35s linear}
+.ct{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;min-width:0}
+.r1{display:flex;align-items:center;justify-content:center}
+.ar{color:var(--ky2)}.ar.on{color:var(--green)}
+.ar svg{display:block;width:56px;height:56px;stroke-width:2.6}
+.gr,.sp{display:flex;flex-direction:column;align-items:center;margin:0 18px}
+.gr small,.sp small,.tp small{color:var(--mu);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.gr b,.sp b{font:bold 60px/1 "Courier New",monospace;color:var(--bl)}
+.sp b{min-width:3ch;text-align:center}
+.tp{margin-top:6px;text-align:center;--c:var(--green)}
+.tp b{font:bold 20px "Courier New",monospace;color:var(--c);margin:0 8px}
+.tp span{font-size:12px;font-weight:bold;color:var(--c);text-transform:uppercase;letter-spacing:.06em}
+
+/* luces testigo */
+.tells{display:flex;flex-wrap:wrap;justify-content:center;margin-top:2px}
+.tl{display:flex;align-items:center;justify-content:center;width:44px;height:28px;margin:2px 5px;border-radius:7px;background:#0e1014;color:#2a3039}
+.tl svg{width:20px;height:20px}
+.tl.on{color:var(--c)}
+
+/* módulos de interruptores (compactos) */
+.mods{display:flex;flex-wrap:wrap;margin:-3px}.mods>*{margin:3px}
+.mod{box-sizing:border-box;background:var(--pn);border:2px solid var(--ed);border-radius:12px;padding:5px 7px 6px}
+.mod h2{margin:0 0 3px 3px;font-size:10px;font-weight:bold;letter-spacing:.16em;text-transform:uppercase;color:var(--mu)}
+.g{display:flex;flex-wrap:wrap;align-content:flex-start;margin:-2px}.g>*{margin:2px}
+.k{flex:1 1 0;min-width:0;height:66px;box-sizing:border-box;padding:4px 0 3px;border-radius:9px;background:var(--ky);border:2px solid var(--ed);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+.k:active,.p{background:var(--ky2)}
+.led{display:block;width:22px;height:3px;border-radius:2px;background:#07080a;margin-bottom:3px}
+.k svg{width:22px;height:22px;color:var(--mu)}
+.tt{display:block;margin-top:3px;font-size:9px;line-height:11px;font-weight:bold;text-transform:uppercase;color:var(--tx);white-space:nowrap}
+.sb{display:block;max-width:100%;min-height:11px;font-size:9px;line-height:11px;color:var(--mu);white-space:nowrap;overflow:hidden}
+.k.on .led{background:var(--c)}
+.k.on svg{color:var(--c)}
+.k.on .sb{color:var(--c)}
+.k.on{background:var(--ky2)}
+.t{flex:1 1 100%;box-sizing:border-box;display:flex;align-items:center;padding:5px 6px;border-radius:9px;background:var(--ky);border:2px solid var(--ed)}
+.t .tt{flex:none;width:80px;margin:0 6px 0 2px;white-space:normal}
+.row{flex:1 1 0;display:flex;margin:-2px}
+.m{flex:1 1 0;margin:2px;display:flex;align-items:center;justify-content:center;min-height:42px;border-radius:8px;background:var(--pn);border:2px solid var(--ed);font-weight:bold;font-size:12px;text-align:center;box-sizing:border-box}
+.m:active,.m.p{background:var(--ky2);color:var(--bl)}
+</style>
+</head>
+<body>
+<div id="stage">
+<svg width="0" height="0" style="position:absolute"><defs>
+<symbol id="i-power" viewBox="0 0 24 24"><path d="M12 2v9"/><path d="M18.4 6.6a9 9 0 1 1-12.8 0"/></symbol>
+<symbol id="i-park" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 17V7h3a3 3 0 0 1 0 6h-3"/></symbol>
+<symbol id="i-gauge" viewBox="0 0 24 24"><path d="m12 14 4-4"/><path d="M3.3 19a10 10 0 1 1 17.4 0"/></symbol>
+<symbol id="i-horn" viewBox="0 0 24 24"><path d="M3 10v4h4l6 4V6L7 10z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/></symbol>
+<symbol id="i-minus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></symbol>
+<symbol id="i-bulb" viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6M10 22h4"/></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/></symbol>
+<symbol id="i-arrl" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7M19 12H5"/></symbol>
+<symbol id="i-arrr" viewBox="0 0 24 24"><path d="m12 5 7 7-7 7M5 12h14"/></symbol>
+<symbol id="i-hazard" viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></symbol>
+<symbol id="i-beacon" viewBox="0 0 24 24"><path d="M7 18a5 5 0 0 1 10 0M5 21h14M12 3v2M4.2 7.2l1.4 1.4M19.8 7.2l-1.4 1.4"/></symbol>
+<symbol id="i-wiper" viewBox="0 0 24 24"><path d="M3 18a9 9 0 0 1 18 0"/><path d="M12 18 7 9"/></symbol>
+<symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+<symbol id="i-lift" viewBox="0 0 24 24"><path d="m17 11-5-5-5 5M17 18l-5-5-5 5"/></symbol>
+<symbol id="i-cam" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3"/></symbol>
+<symbol id="i-map" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></symbol>
+<symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></symbol>
+<symbol id="i-full" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></symbol>
+</defs></svg>
+
+<header>
+  <div id="pz"></div>
+  <div class="pill" id="st"><i></i><span>Conectando…</span></div>
+  <div class="hr"><button class="hb" id="tema"></button><button class="hb" id="fs"></button></div>
+</header>
+
+<!--CLUSTER-->
+<section class="cl">
+  <div class="cr">
+    <div class="gw" id="gS"></div>
+    <div class="ct">
+      <div class="r1">
+        <span class="ar" id="il"></span>
+        <div class="gr"><small>Marcha</small><b id="gear">N</b></div>
+        <div class="sp"><small>km/h</small><b id="vel">0</b></div>
+        <span class="ar" id="ir"></span>
+      </div>
+      <div class="tp" id="tp"><small>Frenos</small><b id="tmp">25.0 °C</b><span id="tms">Óptimo</span></div>
+    </div>
+    <div class="gw" id="gT"></div>
+  </div>
+  <div class="tells" id="tells"></div>
+</section>
+<!--/CLUSTER-->
+
+<main class="mods" id="app"></main>
+</div>
+
+<script>
+/* ============ CONFIGURACIÓN: aquí agregas, quitas o cambias botones ============
+   t: título (corto, cabe en ~10 letras) · k: tecla · i: icono · c: color (green amber red blue cyan)
+   on(e): cuándo se enciende · s(e): texto pequeño · hold: se mantiene mientras lo tocas
+   tell: también sale como luz testigo · loc: interruptor local · wip: limpiaparabrisas
+   sub: grupo [texto, tecla, mantener?]
+   El último número de cada grupo es el ancho del módulo en %. Cada fila debe sumar ~100. */
+var NIVELES_LIMPIADORES = 3;
+var POLL_MS = 350;       // sube a 450-500 si la tablet sigue lenta
+var VEL_MAX = 120;       // fondo de escala del velocímetro (km/h)
+var TEMP_MAX = 500;      // fondo de escala de temperatura de frenos (°C)
+var GRUPOS = [
+ ['Conducción', [
+  {t:'Ignición', k:'e', i:'power', c:'green', tell:1, on:function(e){return e.motor}, s:function(e){return e.motor?'En marcha':'Apagado'}},
+  {t:'Freno mano', k:'space', i:'park', c:'red', tell:1, on:function(e){return e.freno_mano}, s:function(e){return e.freno_mano?'Puesto':'Suelto'}},
+  {t:'Crucero', k:'c', i:'gauge', c:'green', tell:1, on:function(e){return e.crucero}, s:function(e){return e.crucero?'Activo':'Apagado'}},
+  {t:'Bocina', k:'h', i:'horn', c:'amber', hold:1},
+  {t:'Retarder −', k:'j', i:'minus', c:'blue'},
+  {t:'Retarder +', k:';', i:'plus', c:'blue'}], 46.9],
+ ['Luces', [
+  {t:'Luces', k:'l', i:'bulb', c:'green', tell:1, on:function(e){return e.luces>0}, s:function(e){return ['Apagadas','Cortesía','Bajas'][e.luces]}},
+  {t:'Altas', k:'k', i:'sun', c:'blue', tell:1, on:function(e){return e.altas}},
+  {t:'Int. izq.', k:',', i:'arrl', c:'green', on:function(e){return e.int_izq&&!e.hazards}},
+  {t:'Int. der.', k:'.', i:'arrr', c:'green', on:function(e){return e.int_der&&!e.hazards}},
+  {t:'Emergencia', k:'f', i:'hazard', c:'red', tell:1, on:function(e){return e.hazards}},
+  {t:'Torretas', k:'o', i:'beacon', c:'amber', tell:1, on:function(e){return e.torretas}},
+  {t:'Limpiadores', k:'p', i:'wiper', c:'cyan', wip:1}], 52.9],
+ ['Remolque y suspensión', [
+  {t:'Enganche', k:'t', i:'link', c:'green', tell:1, on:function(e){return e.remolque}, s:function(e){return e.remolque?'Enganchado':'Sin remolque'}},
+  {t:'Bloqueo dif.', k:'v', i:'lock', c:'amber', loc:1},
+  {t:'Eje retráctil', k:'u', i:'lift', c:'blue', loc:1},
+  {t:'Susp. camión', sub:[['▲ Delantera','q',1],['▼ Delantera','a',1],['▲ Trasera','w',1],['▼ Trasera','s',1]]},
+  {t:'Susp. remolque', sub:[['▲ Subir','i',1],['▼ Bajar','d',1],['Reset','r']]}], 45.9],
+ ['Ventanas', [
+  {t:'Ventana izq.', sub:[['▲ Subir','g',1],['▼ Bajar','b',1]]},
+  {t:'Ventana der.', sub:[['▲ Subir','n',1],['▼ Bajar','x',1]]}], 29.9],
+ ['Vista', [
+  {t:'Cám. int.', k:'1', i:'cam', c:'blue'},
+  {t:'Cám. ext.', k:'2', i:'cam', c:'blue'},
+  {t:'Mapa GPS', k:'m', i:'map', c:'green'}], 22.9]
+];
+/* ================================================================================ */
+
+function $(id){ return document.getElementById(id); }
+function ic(n){ return '<svg><use href="#i-'+n+'" xlink:href="#i-'+n+'" xmlns:xlink="http://www.w3.org/1999/xlink"/></svg>'; }
+function buzz(){ try { navigator.vibrate && navigator.vibrate(10); } catch(_){} }
+function send(p,k){
+  try { var x = new XMLHttpRequest(); x.open('GET','/'+p+'?key='+encodeURIComponent(k),true); x.timeout = 3000; x.send(); } catch(_){}
+}
+
+/* ---- escala: el escenario de 1024 px se ajusta solo a la pantalla (ancho y alto) ---- */
+function ajustar(){
+  var st = $('stage'), w = window.innerWidth, h = window.innerHeight, alto = st.offsetHeight || 640;
+  var s = Math.min(w/1024, h/alto);
+  var tr = 'translate('+((w-1024*s)/2).toFixed(1)+'px,'+((h-alto*s)/2).toFixed(1)+'px) scale('+s.toFixed(4)+')';
+  st.style.webkitTransform = tr; st.style.transform = tr;
+}
+
+/* ---- relojes (se dibujan una sola vez) ---- */
+function pol(r,a){ var t = a*Math.PI/180; return [100+r*Math.sin(t), 100-r*Math.cos(t)]; }
+function f1(n){ return n.toFixed(1); }
+function arco(r,a1,a2){
+  var p = pol(r,a1), q = pol(r,a2);
+  return 'M'+f1(p[0])+' '+f1(p[1])+'A'+r+' '+r+' 0 '+((a2-a1)>180?1:0)+' 1 '+f1(q[0])+' '+f1(q[1]);
+}
+function reloj(cont, max, maj, men, zonas, titulo, unidad){
+  var s = '<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="97" class="gf"/>', dM = '', dm = '', txt = '', v, a, p, q;
+  zonas.forEach(function(z){
+    s += '<path d="'+arco(90,-135+z[0]/max*270,-135+z[1]/max*270)+'" stroke="'+z[2]+'" stroke-width="5" fill="none"/>';
+  });
+  for(v = 0; v <= max; v += men){
+    a = -135 + v/max*270;
+    if(v % maj === 0){
+      p = pol(82,a); q = pol(69,a); dM += 'M'+f1(p[0])+' '+f1(p[1])+'L'+f1(q[0])+' '+f1(q[1]);
+      p = pol(55,a); txt += '<text x="'+f1(p[0])+'" y="'+f1(p[1])+'" dy=".35em" text-anchor="middle" class="lb">'+v+'</text>';
+    } else {
+      p = pol(82,a); q = pol(75,a); dm += 'M'+f1(p[0])+' '+f1(p[1])+'L'+f1(q[0])+' '+f1(q[1]);
+    }
+  }
+  s += '<path d="'+dm+'" class="tk" stroke-width="1"/><path d="'+dM+'" class="tk" stroke-width="2.4"/>'+txt;
+  s += '<text x="100" y="136" text-anchor="middle" class="lm">'+titulo+'</text><text x="100" y="150" text-anchor="middle" class="lm">'+unidad+'</text>';
+  s += '</svg><div class="nv"><svg viewBox="0 0 200 200"><path d="M97.5 112L100 24L102.5 112Z" fill="#ff5a4f" stroke="none"/><circle cx="100" cy="100" r="9" class="hub"/></svg></div>';
+  cont.innerHTML = s;
+  var n = cont.lastChild;
+  n.style.webkitTransform = 'rotate(-135deg)'; n.style.transform = 'rotate(-135deg)';
+  return n;
+}
+var nS, nT;
+function aguja(n, key, frac){
+  var a = -135 + Math.max(0, Math.min(1, frac)) * 270;
+  a = Math.round(a*2)/2;
+  if(cache[key] === a) return; cache[key] = a;
+  var s = 'rotate('+a+'deg)'; n.style.webkitTransform = s; n.style.transform = s;
+}
+
+/* ---- botones de mantener ---- */
+var ver = [], E = {}, nivel = 0, hasta = 0, firmaE = '';
+function mantener(el,k){
+  var iv = null;
+  function dn(ev){ if(ev.cancelable) ev.preventDefault(); if(iv) return; el.classList.add('p'); buzz(); send('down',k); iv = setInterval(function(){ send('down',k); },5000); }
+  function up(){ if(!iv) return; clearInterval(iv); iv = null; el.classList.remove('p'); send('up',k); }
+  if(window.PointerEvent){
+    el.addEventListener('pointerdown',dn);
+    ['pointerup','pointercancel','pointerleave'].forEach(function(n){ el.addEventListener(n,up); });
+  } else {
+    el.addEventListener('touchstart',dn); el.addEventListener('touchend',up); el.addEventListener('touchcancel',up);
+    el.addEventListener('mousedown',dn); el.addEventListener('mouseup',up); el.addEventListener('mouseleave',up);
+  }
+  el.style.touchAction = 'none';
+}
+
+function construir(){
+  var app = $('app'), tells = $('tells');
+  /*GAUGES*/
+  nS = reloj($('gS'), VEL_MAX, 20, 5, [[100,VEL_MAX,'#ff5a4f']], 'VELOCIDAD', 'KM/H');
+  nT = reloj($('gT'), TEMP_MAX, 100, 25, [[0,200,'#4fe08a'],[200,450,'#ffb02e'],[450,TEMP_MAX,'#ff5a4f']], 'FRENOS', '°C');
+  /*/GAUGES*/
+  $('il').innerHTML = ic('arrl'); $('ir').innerHTML = ic('arrr');
+  $('fs').innerHTML = ic('full');
+
+  var pb = document.createElement('button'); pb.className = 'pau';
+  pb.innerHTML = ic('menu')+'<span>Pausa</span>';
+  pb.onclick = function(){ buzz(); send('press','escape'); }; $('pz').appendChild(pb);
+
+  GRUPOS.forEach(function(grupo){
+    var mod = document.createElement('section'); mod.className = 'mod';
+    mod.style.width = 'calc('+grupo[2]+'% - 6px)';
+    mod.innerHTML = '<h2>'+grupo[0]+'</h2><div class="g"></div>';
+    var g = mod.lastChild; app.appendChild(mod);
+    grupo[1].forEach(function(b){
+      if(b.sub){
+        var t = document.createElement('div'); t.className = 't';
+        t.innerHTML = '<span class="tt">'+b.t+'</span><div class="row"></div>';
+        b.sub.forEach(function(s){
+          var m = document.createElement('button'); m.className = 'm'; m.textContent = s[0];
+          if(s[2]) mantener(m,s[1]); else m.onclick = function(){ buzz(); send('press',s[1]); };
+          t.lastChild.appendChild(m);
+        });
+        g.appendChild(t); return;
+      }
+      var el = document.createElement('button'); el.className = 'k'; el.style.setProperty('--c','var(--'+b.c+')');
+      el.innerHTML = '<span class="led"></span>'+ic(b.i)+'<span class="tt">'+b.t+'</span><span class="sb"></span>';
+      var sb = el.lastChild, local = false, lastOn = null, lastTxt = null, tl = null, tlOn = null;
+      if(b.tell && tells){
+        tl = document.createElement('span'); tl.className = 'tl'; tl.title = b.t;
+        tl.style.setProperty('--c','var(--'+b.c+')'); tl.innerHTML = ic(b.i); tells.appendChild(tl);
+      }
+      if(b.hold) mantener(el,b.k);
+      else el.onclick = function(){
+        buzz(); send('press',b.k);
+        if(b.loc){ local = !local; pintar(); }
+        if(b.wip){ nivel = (nivel+1) % (NIVELES_LIMPIADORES+1); hasta = Date.now()+900; pintar(); }
+      };
+      function pintar(){
+        var on = false, txt = '';
+        if(b.wip){ on = nivel>0; txt = on ? 'Nivel '+nivel+'/'+NIVELES_LIMPIADORES : 'Apagados'; }
+        else if(b.loc){ on = local; txt = on ? 'Activo' : 'Manual'; }
+        else if(b.on){ on = !!b.on(E); txt = b.s ? (b.s(E) || '') : ''; }
+        if(on !== lastOn){ lastOn = on; el.classList.toggle('on', on); }
+        if(txt !== lastTxt){ lastTxt = txt; sb.textContent = txt; }
+        if(tl && on !== tlOn){ tlOn = on; tl.classList.toggle('on', on); }
+      }
+      pintar(); ver.push(pintar); g.appendChild(el);
+    });
+  });
+}
+
+/* ---- actualización: cada valor solo se escribe si cambió ---- */
+var cache = {};
+function setTxt(id, v){ if(cache[id] !== v){ cache[id] = v; $(id).textContent = v; } }
+function setCls(id, c, on){ var k = id+c; if(cache[k] !== on){ cache[k] = on; $(id).classList.toggle(c, on); } }
+var ESTADOS = {on:['var(--green)','En línea'], wait:['var(--amber)','Esperando al juego'], pause:['var(--amber)','Juego en pausa'], off:['var(--red)','Servidor sin conexión']};
+function estado(modo){
+  if(cache.modo === modo) return; cache.modo = modo;
+  var m = ESTADOS[modo];
+  $('st').style.setProperty('--c',m[0]); $('st').lastChild.textContent = m[1];
+}
+
+function aplicar(d){
+  estado(!d.conectado ? 'wait' : d.pausado ? 'pause' : 'on');
+  setTxt('vel', d.vel.toFixed(0)); setTxt('gear', String(d.gear));
+  var t = d.temp;
+  setTxt('tmp', t.toFixed(1)+' °C');
+  /*AGUJAS*/
+  aguja(nS, 'aS', d.vel / VEL_MAX);
+  aguja(nT, 'aT', t / TEMP_MAX);
+  /*/AGUJAS*/
+  var cat = t>=450 ? 'red' : t>200 ? 'amber' : 'green';
+  if(cache.cat !== cat){
+    cache.cat = cat; $('tp').style.setProperty('--c','var(--'+cat+')');
+    $('tms').textContent = cat==='red' ? 'Cristalización' : cat==='amber' ? 'Fading severo' : 'Óptimo';
+  }
+  if(d.conectado && d.est){
+    var f = JSON.stringify(d.est);
+    if(f !== firmaE){
+      firmaE = f; E = d.est;
+      if(Date.now() > hasta){ if(!E.limpiadores) nivel = 0; else if(nivel === 0) nivel = 1; }
+      setCls('il','on',!!E.int_izq); setCls('ir','on',!!E.int_der);
+      for(var i=0;i<ver.length;i++) ver[i]();
+    }
+  }
+}
+
+/* ---- ciclo de lectura: una petición a la vez, con timeout ---- */
+function ciclo(){
+  if(document.hidden){ setTimeout(ciclo,1000); return; }
+  var x = new XMLHttpRequest(), listo = false;
+  function sig(ok){ if(listo) return; listo = true; if(!ok) estado('off'); setTimeout(ciclo, ok ? POLL_MS : 1500); }
+  x.open('GET','/data?_='+Date.now(),true);
+  x.timeout = 2500;
+  x.onload = function(){ try { aplicar(JSON.parse(x.responseText)); sig(true); } catch(_){ sig(false); } };
+  x.onerror = x.ontimeout = function(){ sig(false); };
+  x.send();
+}
+
+function tema(t){
+  document.documentElement.setAttribute('data-tema',t);
+  $('tema').innerHTML = ic(t==='noche' ? 'sun' : 'moon');
+  try { localStorage.setItem('tema',t); } catch(_){}
+}
+$('tema').onclick = function(){ tema(document.documentElement.getAttribute('data-tema')==='noche' ? 'dia' : 'noche'); };
+$('fs').onclick = function(){
+  var d = document, e = d.documentElement, en = d.fullscreenElement || d.webkitFullscreenElement;
+  try { if(en) (d.exitFullscreen || d.webkitExitFullscreen).call(d); else (e.requestFullscreen || e.webkitRequestFullscreen).call(e); } catch(_){}
+};
+document.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+window.addEventListener('resize', ajustar);
+window.addEventListener('orientationchange', function(){ setTimeout(ajustar,200); });
+
+var guardado = 'noche'; try { guardado = localStorage.getItem('tema') || 'noche'; } catch(_){}
+construir(); tema(guardado); ajustar(); setTimeout(ajustar,300); ciclo();
+</script>
+</body>
+</html>

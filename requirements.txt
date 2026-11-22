@@ -1,7 +1,7 @@
-pywebview
-pystray
-pillow
 requests
 pyvjoy
+pywebview
+pystray
+Pillow
 inputs
 segno

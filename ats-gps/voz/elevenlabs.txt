@@ -1,0 +1,6 @@
+Voces generadas con ElevenLabs (elevenlabs.io)
+Fecha: 2026-11-19
+Modelo: eleven_v4 (pagina De texto a voz, cortadas por silencios)
+Hombre: (2mAzYQbilw9TukGpFoQV)
+Mujer: Regina - Contact Center (9Godp7dNohUvXk6qp0gS)
+Licencia: generadas con plan gratis (uso no comercial, credito a elevenlabs.io)

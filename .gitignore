@@ -1,14 +1,30 @@
-# Entorno y compilacion
-.venv_build/
-build/
-dist/
-__pycache__/
-*.spec
+# Archivos que crea el programa al usarlo (son de cada jugador)
+Termofreno/config_frenos.json
+Termofreno/k_freno_guardado.json
+Termofreno/memoria_termica.json
+Termofreno/pruebas_frenado/
+Termofreno/*.log
+Termofreno/termofreno_log.txt
+Termofreno/tiempo_gps.json
+Termofreno/vjoy_log.txt
+*.tmp
 
-# Archivos que el programa genera al ejecutarse
-config_frenos.json
-k_freno_guardado.json
-memoria_termica.json
-pruebas_frenado/
-vjoy_log.txt
-termofreno_log.txt
+# Mapa en mosaicos: demasiado grande para el repositorio (va en el .zip de Releases)
+ats-gps/tiles/
+ats-gps/tiles_lejos/
+
+# Herramienta de terceros: va en el .zip de Releases
+Termofreno/SII_Decrypt.exe
+
+# Generador de voces: voces recien generadas (la clave se guarda fuera del proyecto)
+herramientas/voz_elevenlabs/
+
+# Python
+__pycache__/
+*.pyc
+
+# Compilacion de Termofreno.exe (build_termofreno.bat): va en el .zip de Releases, no en el codigo
+Termofreno/.venv_build/
+Termofreno/build/
+Termofreno/dist/
+Termofreno/*.spec

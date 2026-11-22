@@ -1,0 +1,44 @@
+PolyForm Noncommercial License 1.0.0
+
+https://polyformproject.org/licenses/noncommercial/1.0.0
+
+Required Notice: Copyright (c) 2026 El Flacooo
+Required Notice: Commercial use requires separate written permission from El Flacooo. / Para usar este programa con fines comerciales se necesita permiso por escrito de El Flacooo.
+
+The full and official text of this license is at the address above. The
+license itself (section "Notices") allows passing along its URL instead of a
+copy of its text.
+
+------------------------------------------------------------------------------
+Resumen en español (NO oficial; si hay duda, vale el texto oficial en inglés)
+------------------------------------------------------------------------------
+
+Puedes, sin pagar nada:
+- Usar el programa para jugar, aprender, investigar o cualquier fin no comercial.
+- Leer, copiar y compartir el código y el programa, también con cambios tuyos,
+  siempre que incluyas esta licencia (o su dirección) y las líneas
+  "Required Notice" de arriba.
+
+No puedes:
+- Usarlo con fines comerciales (venderlo, cobrar por él, meterlo en un
+  producto o servicio de pago) sin permiso por escrito de El Flacooo.
+
+El programa se entrega "tal cual", sin garantía de ningún tipo.
+
+------------------------------------------------------------------------------
+A qué se aplica esta licencia
+------------------------------------------------------------------------------
+
+Solo al código de El Flacooo: las carpetas Termofreno/, ats-gps/ (index.html,
+ruta.js, poi.js, avisos.js y sus datos) y herramientas/.
+
+NO se aplica a las partes de terceros que vienen en el paquete de descarga,
+que conservan su propia licencia:
+- Servidor de telemetría de Funbit (ets2-telemetry-server): GPL-3.0, ver su carpeta.
+- SII_Decrypt.exe de TheLazyTomcat: MPL-2.0, ver SII_Decrypt-LICENSE.txt.
+- Leaflet (se carga desde internet): BSD-2-Clause.
+- Voces del GPS (ats-gps/voz): generadas con ElevenLabs (elevenlabs.io),
+  sujetas a sus condiciones de uso.
+- Mosaicos del mapa y red de carreteras: hechos a partir de American Truck
+  Simulator (SCS Software) y del mod de mapa Reforma; esos contenidos son de
+  sus dueños.

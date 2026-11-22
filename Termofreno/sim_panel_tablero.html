@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Termofreno - Tablero</title>
+<style>
+html,body{margin:0;height:100%;overflow:hidden}
+:root{--bg:#020406;--face:#05090c;--glow:#0b4650;--band:#15191e;--rim:#59616b;--ink:#eef3f7;--dim:#7f8c97;--ln:#232c33;--pn:#0a0f13;--cy:#3fd0dc;--bl:#2f8cff;--gr:#38d97a;--am:#ffb000;--rd:#ff3b30;--road:#071418}
+body.day{--bg:#cfd5db;--face:#f2f4f6;--glow:#cdeaee;--band:#d3d8de;--rim:#8b949e;--ink:#10151a;--dim:#55616c;--ln:#aab3bc;--pn:#e6eaee;--cy:#0a7f90;--bl:#1767c4;--gr:#128a4c;--am:#b86e00;--rd:#cf2a20;--road:#dde5e8}
+body{background:radial-gradient(ellipse at 50% 88%,rgba(20,110,120,.2),transparent 60%),var(--bg);color:var(--ink);font:400 14px "Bahnschrift","Segoe UI","Roboto","Helvetica Neue",Arial,sans-serif;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:background .6s,color .6s}
+body.day{background:var(--bg)}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;cursor:pointer;outline:0}
+#stage{position:absolute;left:0;top:0;width:1280px;height:720px;box-sizing:border-box;padding:12px 18px;transform-origin:0 0;display:flex;flex-direction:column;overflow:hidden}
+body.hot #stage{box-shadow:inset 0 0 0 5px var(--rd)}
+header{display:flex;align-items:center;height:44px;flex:none}
+#clk{font:300 30px "Bahnschrift","Segoe UI",sans-serif;width:92px;font-variant-numeric:tabular-nums}
+.pill{display:flex;align-items:center;color:var(--dim);font-size:13px;width:178px}
+.pill i{width:9px;height:9px;border-radius:50%;margin-right:8px;background:var(--c,#777)}
+.tells{flex:1;display:flex;justify-content:center}
+.tl{width:40px;height:32px;margin:0 3px;display:flex;align-items:center;justify-content:center;border-radius:6px;color:var(--ln);font-size:12px;font-weight:700;transition:color .2s}
+.tl svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tl.on{color:var(--c)}.tl.blk{animation:bk .7s steps(1) infinite}
+@keyframes bk{50%{opacity:.15}}
+.hb{height:36px;padding:0 14px;margin-left:8px;border:1px solid var(--ln);border-radius:6px;background:var(--pn);font-size:13px}
+.hb:active{transform:scale(.97)}.hb.go{background:var(--am);border-color:var(--am);color:#120c00;font-weight:700}
+.mn{display:flex;flex:1;min-height:0;align-items:center}
+.col{width:282px;flex:none}
+.row{display:grid;grid-template-columns:1fr auto;align-items:end;margin:13px 4px}
+.row .l{color:var(--dim);font-size:13px}.row .v{font:500 22px "Bahnschrift","Segoe UI",sans-serif;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.row .b{grid-column:1/3;display:block;height:3px;background:var(--ln);position:relative;margin-top:5px}
+.row .b u{position:absolute;top:0;bottom:0;left:0;width:0;background:linear-gradient(90deg,var(--bl),var(--cy));transition:left .15s,width .15s}
+.row .b u.w{background:var(--am)}.row .b u.r{background:var(--rd)}
+.cen{flex:1;display:flex;justify-content:center}
+#cl2{width:100%;max-height:560px}
+#cl2 text{fill:var(--ink);font-family:"Bahnschrift","Segoe UI",Roboto,sans-serif}
+.bd{fill:none;stroke:var(--band);stroke-width:54}.rm{fill:none;stroke:var(--rim);stroke-width:2}.ri{fill:none;stroke:var(--ln);stroke-width:2}
+.tk{stroke:var(--dim);stroke-width:2}.tm{stroke:var(--ink);stroke-width:3}.tr{stroke:var(--rd);stroke-width:3}
+.nb{font-size:21px;font-weight:500}.nr{font-size:21px;font-weight:500}
+.pg{fill:none;stroke:var(--cy);stroke-width:4;stroke-linecap:butt;transition:stroke-dasharray .06s linear}
+.pg.hi{stroke:var(--am)}.pg.ov{stroke:var(--rd)}
+.nd{transform-origin:380px 290px;transition:transform .06s linear}
+.nd line{stroke:var(--ink);stroke-width:4;stroke-linecap:round}
+.big{font-size:124px;font-weight:500;font-variant-numeric:tabular-nums}
+.hz{stroke:var(--cy);stroke-width:1.5;opacity:.5}.rl{fill:none;stroke:var(--cy);stroke-width:2;opacity:.7}.rc{fill:none;stroke:var(--ink);stroke-width:3;opacity:.7}
+#rd0{transition:transform .5s}
+.sgc{fill:#fff;stroke:var(--rd);stroke-width:8}.sgt{fill:#000!important;font-size:27px;font-weight:700}
+#sg.ov .sgc{animation:bk .5s steps(1) infinite}
+@keyframes mv{to{stroke-dashoffset:-26}}
+.bt{display:flex;flex:none;border-top:1px solid var(--ln);padding-top:8px;height:54px}
+.bt div{flex:1;margin-right:14px;min-width:0}.bt div:last-child{margin:0}
+.bt small{display:block;color:var(--dim);font-size:12px}.bt b{display:block;font:500 19px "Bahnschrift","Segoe UI",sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#shade{position:absolute;inset:0;background:rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:opacity .3s}
+#drw{position:absolute;left:0;right:0;bottom:0;max-height:640px;background:var(--bg);border-top:2px solid var(--am);border-radius:14px 14px 0 0;padding:10px 14px 14px;transform:translateY(105%);transition:transform .35s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column}
+.open #drw{transform:none}.open #shade{opacity:1;pointer-events:auto}
+.dh{display:flex;align-items:center;margin-bottom:6px}.dh h3{flex:1;margin:0;font-size:16px;font-weight:500;letter-spacing:1px}
+.pls{display:flex;flex-wrap:wrap;margin:-4px}
+.pl{box-sizing:border-box;margin:4px;padding:8px 10px 10px;background:var(--pn);border:1px solid var(--ln);border-radius:8px}
+.pl h4{margin:0 0 6px 2px;color:var(--dim);font-size:12px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase}
+.gr{display:flex;flex-wrap:wrap;margin:-3px}.gr>*{margin:3px}
+.kb{flex:1 1 0;min-width:86px;height:70px;border-radius:8px;background:var(--bg);border:1px solid var(--ln);border-bottom-width:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:13px;--c:var(--gr)}
+.kb small{color:var(--dim);font-size:11px;min-height:13px}
+.kb.on{border-color:var(--c);color:var(--c)}.kb.on small{color:var(--c)}
+.kb.p,.kb:active{transform:translateY(3px);border-bottom-width:1px}
+.sub{flex:1 1 100%;display:flex;align-items:center}.sub>span{width:96px;color:var(--dim);font-size:12px}
+.sub .kb{height:46px;min-width:0;margin:0 0 0 6px}
+
+/* ===== pantallas ===== */
+:root{--sk1:#02080f;--sk2:#0b2c36;--hl1:#0a1a21;--hl2:#0e242c;--gnd:#05090c;--asp:#0b1014;--sun:#cfe8ef;--stars:1;--cab:#2459b8}
+body.day{--sk1:#7fb8e6;--sk2:#dcf0fb;--hl1:#a9c0b0;--hl2:#86a592;--gnd:#6c747d;--asp:#4a5159;--sun:#ffe79a;--stars:0;--cab:#2459b8}
+.ck{width:96px;flex:none;line-height:1}#clk{display:block;width:auto;font-size:27px}#gclk{display:block;margin-top:3px;color:var(--bl);font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pill{width:150px;font-size:12px}
+#alr{position:absolute;left:14px;right:14px;top:12px;padding:12px 16px;border-radius:8px;background:var(--am);color:#120c00;font:700 22px "Bahnschrift","Segoe UI",sans-serif;text-align:center;letter-spacing:.5px;display:none;z-index:3;box-shadow:0 4px 18px rgba(0,0,0,.5)}
+#alr.on{display:block;animation:alb .8s steps(1) infinite}#alr.rd{background:var(--rd);color:#fff}
+@keyframes alb{50%{opacity:.25}}
+.tl{width:36px;margin:0 2px}.tl svg{width:22px;height:22px}
+.vw{display:none;flex:1;min-height:0;flex-direction:column}
+.vw.on{display:flex;animation:pgi .3s ease-out}
+@keyframes pgi{from{opacity:0;transform:translateX(24px)}}
+.pt{margin:2px 0 10px;font:500 18px "Bahnschrift","Segoe UI",sans-serif;color:var(--dim);letter-spacing:.5px}
+.cd{background:var(--pn);border:1px solid var(--ln);border-radius:8px;padding:10px 16px;margin:0 0 10px;position:relative}
+.cd h3{margin:0 0 4px;color:var(--dim);font-size:12px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase}
+.g3,.g4{display:flex}.g3{flex:1}.g3 .cd,.g4 .cd{flex:1;margin-right:10px}.g3 .cd:last-child,.g4 .cd:last-child{margin-right:0}
+.big2{font:500 56px "Bahnschrift","Segoe UI",sans-serif;font-variant-numeric:tabular-nums;line-height:1.1}
+.dm{color:var(--dim);font-size:14px}
+.chips{display:flex;flex-wrap:wrap}.chip{display:flex;align-items:center;margin:4px 8px 4px 0;padding:6px 12px;border:1px solid var(--ln);border-radius:16px;color:var(--dim);font-size:13px}
+.chip i{width:8px;height:8px;border-radius:50%;background:var(--ln);margin-right:8px}.chip.on{color:var(--ink);border-color:var(--c)}.chip.on i{background:var(--c)}
+.cities{display:flex;justify-content:space-between;font:500 36px "Bahnschrift","Segoe UI",sans-serif}
+.trkb{position:relative;height:6px;background:var(--ln);border-radius:3px;margin:20px 10px 10px}
+.trkb u{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,var(--bl),var(--cy));border-radius:3px;transition:width .2s}
+.trkb i{position:absolute;left:0;top:-7px;width:20px;height:20px;margin-left:-10px;border-radius:50%;background:var(--cy);border:3px solid var(--bg);transition:left .2s}
+.st small{display:block;color:var(--dim);font-size:12px;letter-spacing:1.5px;text-transform:uppercase}.st b{display:block;font:500 34px "Bahnschrift","Segoe UI",sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:4px}
+.inc{display:flex;flex:1;min-height:0}.sc{flex:1;padding:0;overflow:hidden;margin:0 10px 0 0}.sc svg{width:100%;height:100%;display:block}
+.rcl{width:410px;flex:none;display:flex;flex-direction:column}.rcl .cd:last-child{margin:0}
+.ro b{font:500 52px "Bahnschrift","Segoe UI",sans-serif;font-variant-numeric:tabular-nums}.ro span{margin-left:14px;color:var(--dim);font-size:22px}.ro em{float:right;font-style:normal;font-weight:700;letter-spacing:1.5px;margin-top:16px}
+.ro p{margin:2px 0 0;min-height:18px;font-size:13px;color:var(--am)}
+.rr{display:flex;cursor:pointer}.rr div{flex:1}.rr small{display:block;color:var(--dim);font-size:12px}.rr b{font:500 24px "Bahnschrift","Segoe UI",sans-serif}
+#scn{--ac:var(--gr)}
+.sc{display:flex;flex-direction:column}.sc svg{flex:1;min-height:0;height:auto}
+.rdl{animation:rdl linear infinite;animation-duration:var(--rl,.5s);animation-play-state:paused}#scn.mov .rdl{animation-play-state:running}
+@keyframes rdl{to{stroke-dashoffset:60}}
+#wd{transform-origin:400px 230px;transition:transform .2s linear}
+.as{display:flex;flex:none;padding:0 14px 14px}.ai{flex:1;margin-right:10px;padding:8px 12px;border:1px solid var(--ln);border-left:4px solid var(--ln);border-radius:8px;transition:border-color .3s}.ai:last-child{margin-right:0}
+.ai b{display:block;font:500 15px "Bahnschrift","Segoe UI",sans-serif}.ai small{display:block;margin-top:2px;color:var(--dim);font-size:13px}
+.ai.ok{border-left-color:var(--gr)}.ai.ok small{color:var(--gr)}.ai.wr{border-left-color:var(--am)}.ai.wr small{color:var(--am)}.ai.rd{border-left-color:var(--rd)}.ai.rd small{color:var(--rd)}
+#pn{transform-origin:210px 175px;transition:transform .2s linear}
+#pro text,#spk text{fill:var(--dim);font-size:12px;font-family:"Bahnschrift","Segoe UI",sans-serif}
+
+.gj{color:var(--bl)}.rl2{font-size:16px;font-weight:400}
+/* ===== GPS TruckNav en la columna derecha ===== */
+:root{--gpsw:380px}
+#cR{width:var(--gpsw);align-self:stretch;display:flex;margin:6px 0 6px 10px}
+#cR .row{display:none}  /* indicadores ocultos: siguen existiendo para que el script no falle */
+#gps{flex:1;position:relative;border:1px solid var(--ln);border-radius:10px;overflow:hidden;background:var(--pn)}
+#gps iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--pn)}
+#gps .gm{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;text-align:center;color:var(--dim);font-size:13px}
+#gps .gbar{position:absolute;z-index:2;top:8px;right:8px;display:flex}
+#gps .gbar .hb{height:32px;padding:0 10px;font-size:12px;margin-left:6px;background:rgba(10,15,19,.88);color:#eef3f7}
+#gal{position:absolute;z-index:3;left:8px;right:8px;bottom:66px;padding:8px 10px;border-radius:8px;text-align:center;display:none;pointer-events:none;background:var(--am);color:#120c00}
+#gal.rd{background:var(--rd);color:#fff}#gal.on{display:block;animation:gb .8s steps(1) infinite}
+#gal b{display:block;font:700 19px "Bahnschrift","Segoe UI",sans-serif;letter-spacing:.5px}#gal small{display:block;margin-top:2px;font-size:13px;font-weight:600}
+@keyframes gb{50%{opacity:.55}}
+#gps.full{position:absolute;left:0;top:0;width:1280px;height:720px;z-index:50;border:0;border-radius:0}
+#gps.full .gbar .hb{height:40px;font-size:14px}
+</style></head><body>
+<div id="stage">
+<header>
+ <div class="ck"><span id="clk">--:--</span><span id="gclk">Juego --:--</span></div>
+ <div class="pill" id="st"><i></i><span>Conectando…</span></div>
+ <div class="tells" id="tells"></div>
+ <button class="hb" id="vw">Principal · 1/4</button>
+ <button class="hb" id="mod">AUTO</button>
+ <button class="hb" id="fs">⛶</button>
+ <button class="hb go" id="mnd">MANDOS</button>
+</header>
+<div class="vw on" id="p0">
+<main class="mn"><div class="col" id="cL"></div><div class="cen"><svg id="cl2" viewBox="0 0 760 520"></svg></div><div class="col" id="cR"></div></main>
+<footer class="bt">
+ <div><small>Camión</small><b id="trk">--</b></div>
+ <div style="flex:1.2"><small>Carga</small><b id="jc">--</b></div>
+ <div style="flex:1.5"><small>Ruta</small><b id="jr">--</b></div>
+ <div><small>Faltan (juego / real)</small><b><span class="gj" id="jk">--</span><span class="rl2" id="jk2"></span></b></div>
+ <div style="flex:1.2"><small>Llegada (juego / real)</small><b><span class="gj" id="je">--</span><span class="rl2" id="je2"></span></b></div>
+</footer>
+</div>
+<div class="vw" id="p1"><h2 class="pt" id="p1t">Camión</h2>
+ <div class="g3"><div class="cd"><h3>Fluidos</h3><div id="bF"></div></div><div class="cd"><h3>Daños</h3><div id="bD"></div></div><div class="cd"><h3>Frenos</h3><div class="big2" id="c_t">25 °C</div><div class="dm" id="c_ts">Óptimo</div><div id="bB"></div></div></div>
+ <div class="cd" style="margin:0"><h3>Sistemas</h3><div class="chips" id="chips"></div></div></div>
+<div class="vw" id="p2"><h2 class="pt">Ruta y contrato</h2>
+ <div class="cd"><div class="cities"><b id="r_o">--</b><b id="r_d">--</b></div><div class="trkb"><u id="r_f"></u><i id="r_m"></i></div><div class="dm" id="r_pc">Avance estimado --</div></div>
+ <div class="g4"><div class="cd st"><small>Faltan</small><b id="r_k">--</b></div><div class="cd st"><small>Llegada</small><b id="r_e">--</b></div><div class="cd st"><small>Tiempo del contrato</small><b id="r_t">--</b></div><div class="cd st"><small>Holgura</small><b id="r_h">--</b></div></div>
+ <div class="g4"><div class="cd st" style="flex:1.4"><small>Carga</small><b id="r_c">--</b></div><div class="cd st"><small>Pago</small><b id="r_p">--</b></div><div class="cd st"><small>Próximo descanso</small><b id="r_s">--</b></div><div class="cd st"><small>Velocidad / límite</small><b id="r_v">--</b></div></div></div>
+<div class="vw" id="p3"><div class="inc">
+ <div class="cd sc"><svg id="scn" viewBox="0 0 800 470" preserveAspectRatio="xMidYMid meet"></svg><div class="as"><div class="ai" id="a_dif"><b>Bloqueo de diferencial</b><small></small></div><div class="ai" id="a_fm"><b>Freno de motor</b><small></small></div><div class="ai" id="a_ret"><b>Retarder</b><small></small></div><div class="ai" id="a_fr"><b>Frenos</b><small></small></div></div><div id="alr"></div></div>
+ <div class="rcl">
+  <div class="cd"><h3>Inclinómetro</h3><svg id="pro" viewBox="0 0 420 200"></svg></div>
+  <div class="cd ro"><b id="i_pc">0.0 %</b><span id="i_dg">0.0°</span><em id="i_ds">PLANO</em><p id="i_ht"></p></div>
+  <div class="cd"><h3>Últimos 40 segundos</h3><svg id="spk" viewBox="0 0 420 100"></svg></div>
+  <div class="cd rr" id="rec"><div><small>Máx. subida</small><b id="i_mu">0.0 %</b></div><div><small>Máx. bajada</small><b id="i_md">0.0 %</b></div><div><small>Lateral</small><b id="i_lt">—</b></div></div>
+ </div></div></div>
+<div id="shade"></div>
+<div id="drw"><div class="dh"><h3>MANDOS DEL CAMIÓN</h3><button class="hb" id="pau" style="border-color:var(--rd);color:var(--rd)">Pausa</button><button class="hb" id="cls">Cerrar</button></div><div class="pls" id="pls"></div></div>
+</div>
+<script>
+var VMAX=130,RMAX=2500,TF=260,TM=450,TP=400,POLL=20,POLLP=250,HMS=350,HN=115;
+var GRUPOS=[
+['Conducción',[
+ {t:'Eléctrico',k:'x',c:'cy',on:function(e){return e.electrico},s:function(e){return e.electrico?'Encendido':'Apagado'}},
+ {t:'Ignición',k:'e',c:'gr',on:function(e){return e.motor},s:function(e){return e.motor?'En marcha':'Apagado'}},
+ {t:'Freno de mano',n:'Freno mano',k:'space',c:'rd',on:function(e){return e.freno_mano},s:function(e){return e.freno_mano?'Puesto':'Suelto'}},
+ {t:'Crucero',k:'c',c:'gr',on:function(e){return e.crucero},s:function(e){return e.crucero?'Activo':'Apagado'}},
+ {t:'Bocina',k:'h',c:'am',hold:1},{t:'Retarder −',k:'j',c:'bl'},{t:'Retarder +',k:';',c:'bl'}],59.1],
+['Luces',[
+ {t:'Luces',k:'l',c:'gr',on:function(e){return e.luces>0},s:function(e){return['Apagadas','Cortesía','Bajas'][e.luces||0]}},
+ {t:'Luces altas',n:'Altas',k:'k',c:'bl',on:function(e){return e.altas}},
+ {t:'Emergencia',k:'f',c:'am',on:function(e){return e.hazards}},
+ {t:'Torretas',k:'o',c:'am',on:function(e){return e.torretas}},
+ {t:'Limpiadores',k:'p',c:'cy',wip:1}],40.8],
+['Remolque y suspensión',[
+ {t:'Enganche remolque',n:'Enganche',k:'t',c:'gr',on:function(e){return e.remolque},s:function(e){return e.remolque?'Enganchado':'Sin remolque'}},
+ {t:'Bloqueo diferencial',n:'Bloqueo dif.',k:'v',c:'am',loc:1},{t:'Eje retráctil',k:'u',c:'bl',loc:1},
+ {t:'Suspensión camión',n:'Susp. camión',sub:[['▲ Delantera','q',1],['▼ Delantera','a',1],['▲ Trasera','w',1],['▼ Trasera','s',1]]},
+ {t:'Suspensión remolque',n:'Susp. remolque',sub:[['▲ Subir','i',1],['▼ Bajar','d',1],['Reset','r']]}],46.4],
+['Ventanas',[
+ {t:'Ventana izquierda',n:'Ventana izq.',sub:[['▲ Subir','g',1],['▼ Bajar','b',1]]},
+ {t:'Ventana derecha',n:'Ventana der.',sub:[['▲ Subir','n',1],['▼ Bajar','x',1]]}],30.2],
+['Vista',[{t:'Cámara interior',n:'Cám. int.',k:'1',c:'bl'},{t:'Cámara exterior',n:'Cám. ext.',k:'2',c:'bl'},{t:'Mapa / GPS',n:'Mapa GPS',k:'m',c:'gr'}],23.3]];
+var PAUSA={t:'Pausa',k:'escape'};
+
+function $(i){return document.getElementById(i)}
+var E={},MAP={},C={},ver=[],nivel=0,hasta=0,modo='auto',noche=true;
+try{MAP=JSON.parse(localStorage.getItem('teclas')||'{}')||{}}catch(_){}   /* mismas teclas reasignadas que los otros paneles */
+function K(id,d){return MAP[id]||d}
+var SID=Math.random().toString(36).slice(2,8),SEQ=0;
+var ESPEJO=/[?&]espejo=1/.test(location.search),LOC={},BTN={},ESPN=null,ESPL='',ESPV=-1,ESPON=false,ESPF=null,ESPD=null;
+function send(p,k,b){if(ESPEJO)return;try{var x=new XMLHttpRequest();x.open('GET','/'+p+'?key='+encodeURIComponent(k)+'&s='+SID+'&n='+(++SEQ)+(b&&ESPON?'&b='+encodeURIComponent(b):''),true);x.timeout=3000;x.send()}catch(_){}}
+var EQ={},ET=null;
+function esp(o){if(ESPEJO||!ESPON)return;for(var k in o)EQ[k]=o[k];if(ET)return;ET=setTimeout(function(){ET=null;var q=[];for(var k in EQ)q.push(k+'='+encodeURIComponent(EQ[k]));EQ={};try{var x=new XMLHttpRequest();x.open('GET','/espejo?'+q.join('&'),true);x.timeout=3000;x.send()}catch(_){}},60)}
+function locStr(){var a=[];for(var k in LOC)if(LOC[k])a.push(k);return a.join('|')}
+if(ESPEJO){var st1=document.createElement('style');st1.textContent='body.esp #stage{pointer-events:none}body.esp #gps{pointer-events:auto}';document.head.appendChild(st1);document.body.classList.add('esp');POLL=30}
+function buzz(){try{navigator.vibrate&&navigator.vibrate(10)}catch(_){}}
+function S(id,v){if(C[id]!==v){C[id]=v;$(id).textContent=v}}
+function num(v,d){return(typeof v=='number'&&isFinite(v))?v:d}
+
+/* ---------- cluster (SVG) ---------- */
+var CX=380,CY=290;
+function pt(r,a){a=a*Math.PI/180;return[CX+r*Math.cos(a),CY+r*Math.sin(a)]}
+function arc(r,a0,a1,sw){var s=pt(r,a0),e=pt(r,a1);return'M'+s[0].toFixed(1)+' '+s[1].toFixed(1)+'A'+r+' '+r+' 0 0 '+sw+' '+e[0].toFixed(1)+' '+e[1].toFixed(1)}
+function ln(a,r1,r2,c){var p=pt(r1,a),q=pt(r2,a);return'<line class="'+c+'" x1="'+p[0].toFixed(1)+'" y1="'+p[1].toFixed(1)+'" x2="'+q[0].toFixed(1)+'" y2="'+q[1].toFixed(1)+'"/>'}
+(function(){
+ var h='<defs><radialGradient id="fg" cx="50%" cy="86%" r="80%"><stop offset="0" style="stop-color:var(--glow)"/><stop offset=".6" style="stop-color:var(--face)"/></radialGradient>'+
+ '<linearGradient id="rg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--face)"/><stop offset="1" style="stop-color:var(--road)"/></linearGradient>'+
+ '<clipPath id="cp"><circle cx="380" cy="290" r="196"/></clipPath></defs>'+
+ '<circle cx="380" cy="290" r="196" fill="url(#fg)"/>'+
+ '<g clip-path="url(#cp)"><g id="rd0"><rect x="120" y="330" width="520" height="300" fill="url(#rg)"/><line class="hz" x1="120" x2="640" y1="330" y2="330"/>'+
+ '<path class="rl" d="M372 330L240 540M388 330L520 540"/><path id="rdc" class="rc" d="M380 330V540" stroke-dasharray="10 16"/></g></g>'+
+ '<path class="bd" d="'+arc(223,135,265,1)+'"/><path class="bd" d="'+arc(223,275,405,1)+'"/>'+
+ '<path class="rm" d="'+arc(250,135,265,1)+'"/><path class="rm" d="'+arc(250,275,405,1)+'"/><path class="ri" d="'+arc(196,135,265,1)+'"/><path class="ri" d="'+arc(196,275,405,1)+'"/>';
+ var i,a,m,t;
+ for(i=0;i<=130;i+=5){a=135+i;m=i%10==0;h+=ln(a,247,m?228:238,m?'tm':'tk');if(i%20==0){t=pt(209,a);h+='<text class="nb" text-anchor="middle" x="'+t[0].toFixed(1)+'" y="'+(t[1]+7).toFixed(1)+'">'+i+'</text>'}}
+ for(i=0;i<=25;i++){a=405-130*i/25;m=i%5==0;h+=ln(a,247,m?228:238,i>=21?'tr':(m?'tm':'tk'));if(m){t=pt(209,a);h+='<text class="nr" text-anchor="middle" x="'+t[0].toFixed(1)+'" y="'+(t[1]+7).toFixed(1)+'">'+i+'</text>'}}
+ h+='<path id="pS" class="pg" d="'+arc(190,135,265,1)+'" pathLength="100" stroke-dasharray="0 100"/><path id="pR" class="pg" d="'+arc(190,405,275,0)+'" pathLength="100" stroke-dasharray="0 100"/>'+
+ '<polygon id="lm" points="650,283 650,297 636,290" fill="var(--rd)" style="display:none"/>'+
+ '<g id="nS" class="nd"><line x1="520" y1="290" x2="632" y2="290"/></g><g id="nR" class="nd"><line x1="520" y1="290" x2="632" y2="290"/></g>'+
+ '<text id="tg" x="380" y="150" text-anchor="middle" font-size="38" font-weight="500">N</text>'+
+ '<text id="tv" x="380" y="262" text-anchor="middle" class="big">0</text>'+
+ '<text x="380" y="292" text-anchor="middle" font-size="17" style="fill:var(--dim)">km/h</text>'+
+ '<text x="258" y="212" text-anchor="middle" font-size="13" style="fill:var(--dim)" id="tcl"></text><text x="258" y="236" text-anchor="middle" font-size="24" font-weight="500" id="tcc"></text>'+
+ '<text x="640" y="470" text-anchor="middle" font-size="12" style="fill:var(--dim)">RPM ×100</text>'+
+ '<g id="sg" transform="translate(505 200)" style="display:none"><circle class="sgc" r="30"/><text id="sgt" class="sgt" text-anchor="middle" y="9">--</text></g>';
+ $('cl2').innerHTML=h})();
+function mk(box,list){list.forEach(function(r){var d=document.createElement('div');d.className='row';d.innerHTML='<span class="l">'+r[1]+'</span><span class="v" id="v_'+r[0]+'">--</span><i class="b"><u id="u_'+r[0]+'"></u></i>';$(box).appendChild(d)})}
+mk('cL',[['fu','Combustible'],['co','Consumo · prom. 10 km'],['au','Autonomía'],['ab','AdBlue'],['ai','Aire'],['fr','Frenos']]);
+mk('cR',[['cc','Crucero'],['re','Retarder'],['ct','Contrato'],['ds','Descanso'],['dn','Daños M/T/Ch/Ll/R'],['pa','Pago']]);
+/* GPS propio (index.html del GPS) servido por el servidor de telemetria de la PC. Cambia GPS_PORT / GPS_PATH o usa ?gps=http://IP:PUERTO/ruta */
+var GPS_PORT=25555,GPS_PATH='/skins/ats-gps/index.html';
+(function(){
+ var m=/[?&]gps=([^&]+)/.exec(location.search);
+ var url=m?decodeURIComponent(m[1]):'http://'+location.hostname+':'+GPS_PORT+GPS_PATH;
+ var g=document.createElement('div');g.id='gps';
+ g.innerHTML='<div class="gm">Cargando GPS…<br>'+url+'</div>';
+ var f=document.createElement('iframe');f.src=url+(url.indexOf('?')<0?'?':'&')+'v='+Date.now();   /* v=... evita que el navegador use una copia vieja del GPS */f.setAttribute('allow','geolocation');
+ var al2=document.createElement('div');al2.id='gal';g.appendChild(f);g.appendChild(al2);$('cR').appendChild(g);
+ var full=false;
+ function setFull(v){full=v;g.classList.toggle('full',v);esp({full:v?1:0})}
+ window.espSetFull=setFull;window.espFull=function(){return full};window.espGps=function(m){try{f.contentWindow&&f.contentWindow.postMessage(m,'*')}catch(_){}};
+ /* el boton de mapa completo ahora vive dentro del GPS (index.html) y avisa por postMessage */
+ window.addEventListener('message',function(e){var d=e.data;if(e.source!==f.contentWindow||!d)return;if(d.gps==='destino'){esp({dest:d.x==null?'':Math.round(d.x)+','+Math.round(d.z)});return}if(d.gps!=='mapa-completo')return;buzz();setFull(d.abrir===undefined?!full:!!d.abrir)});
+ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&full)setFull(false)});
+})();
+function rb(id,txt,f,c,bi){S('v_'+id,txt);var u=$('u_'+id),k=f==null?'x':(bi?f.toFixed(2):Math.round(f*100))+c;if(C['b'+id]===k)return;C['b'+id]=k;
+ if(f==null){u.style.width='0';return}
+ f=Math.max(bi?-1:0,Math.min(1,f));u.className=c||'';
+ if(bi){u.style.left=(f>=0?50:50+f*50)+'%';u.style.width=Math.abs(f)*50+'%'}else{u.style.left='0';u.style.width=f*100+'%'}}
+
+/* ---------- testigos ---------- */
+var IC={bj:'<path d="M9 5a7 7 0 0 0 0 14z"/><path d="M12 8l8 2M12 12l8 2M12 16l8 2"/>',al:'<path d="M9 5a7 7 0 0 0 0 14z"/><path d="M12 8h8M12 12h8M12 16h8"/>',
+ em:'<path d="M12 4 3 20h18z"/><path d="M12 10v5M12 17.5h.01"/>',li:'<path d="M3 18a9 9 0 0 1 18 0"/><path d="M12 18 7 9"/>'};
+var TL=[['il','◀','gr',function(e){return e.int_izq}],['bj',0,'gr',function(e){return e.luces===2}],['al',0,'bl',function(e){return e.altas}],
+['em',0,'rd',function(e){return e.hazards}],['fm','P','rd',function(e){return e.freno_mano}],['cc','CC','gr',function(e){return e.crucero}],
+['fo','EB','am',function(e){return e.freno_motor}],['ret','RET','am',null],['to','BCN','am',function(e){return e.torretas}],
+['li',0,'cy',function(e){return e.limpiadores}],['rm','REM','gr',function(e){return e.remolque}],['ir','▶','gr',function(e){return e.int_der}]];
+TL.forEach(function(t){var d=document.createElement('div');d.className='tl';d.id='tl'+t[0];d.style.setProperty('--c','var(--'+t[2]+')');
+ d.innerHTML=t[1]?t[1]:'<svg viewBox="0 0 24 24">'+IC[t[0]]+'</svg>';if(t[0]=='il'||t[0]=='ir')d.style.fontSize='20px';$('tells').appendChild(d)});
+function tl(id,on,blk){var k=(on?1:0)+''+(on&&blk?1:0);if(C['t'+id]===k)return;C['t'+id]=k;var d=$('tl'+id);d.classList.toggle('on',on);d.classList.toggle('blk',on&&!!blk)}
+
+/* ---------- día / noche ---------- */
+function pintarModo(){var hr=new Date().getHours(),n=modo=='auto'?(hr>=19||hr<8):modo=='noche';noche=n;document.body.classList.toggle('day',!n);$('mod').textContent=modo=='auto'?'AUTO · '+(n?'NOCHE':'DÍA'):modo=='dia'?'DÍA':'NOCHE'}
+try{modo=localStorage.getItem('tmodo')||'auto'}catch(_){}
+$('mod').onclick=function(){modo=modo=='auto'?'dia':modo=='dia'?'noche':'auto';try{localStorage.setItem('tmodo',modo)}catch(_){}pintarModo()};
+/* ---------- mandos ---------- */
+function mantener(el,id,def){var iv=null,k;BTN[id]=el;
+ function dn(e){if(e.cancelable)e.preventDefault();if(iv)return;k=K(id,def);el.classList.add('p');buzz();send('down',k,id);iv=setInterval(function(){send('down',k,id)},5000)}
+ function up(){if(!iv)return;clearInterval(iv);iv=null;el.classList.remove('p');send('up',k,id)}
+ if(window.PointerEvent){el.addEventListener('pointerdown',dn);['pointerup','pointercancel','pointerleave'].forEach(function(n){el.addEventListener(n,up)})}
+ else{el.addEventListener('touchstart',dn);el.addEventListener('touchend',up);el.addEventListener('touchcancel',up);el.addEventListener('mousedown',dn);el.addEventListener('mouseup',up)}
+ el.style.touchAction='none'}
+function kb(b){var e=document.createElement('button');e.className='kb';e.style.setProperty('--c','var(--'+b.c+')');
+ e.innerHTML=(b.n||b.t)+'<small></small>';var sb=e.lastChild,loc=false,lo=null,lt=null;
+ BTN[b.t]=e;if(b.hold)mantener(e,b.t,b.k);else e.onclick=function(){buzz();send('press',K(b.t,b.k),b.t);if(b.loc){LOC[b.t]=!LOC[b.t];pt();esp({loc:locStr()})}if(b.wip){nivel=(nivel+1)%4;hasta=Date.now()+900;pt();esp({nivel:nivel})}};
+ function pt(){var on=false,tx='';loc=!!LOC[b.t];if(b.wip){on=nivel>0;tx=on?'Nivel '+nivel+'/3':'Apagados'}else if(b.loc){on=loc;tx=on?'Activo':'Manual'}else if(b.on){on=!!b.on(E);tx=b.s?b.s(E):''}
+  if(on!==lo){lo=on;e.classList.toggle('on',on)}if(tx!==lt){lt=tx;sb.textContent=tx}}
+ pt();ver.push(pt);return e}
+GRUPOS.forEach(function(g){var p=document.createElement('section');p.className='pl';p.style.width='calc('+g[2]+'% - 8px)';p.innerHTML='<h4>'+g[0]+'</h4><div class="gr"></div>';
+ g[1].forEach(function(b){if(b.sub){var t=document.createElement('div');t.className='sub';t.innerHTML='<span>'+(b.n||b.t)+'</span>';
+   b.sub.forEach(function(s){var id=b.t+' '+s[0],m=document.createElement('button');m.className='kb';m.textContent=s[0];
+    BTN[id]=m;if(s[2])mantener(m,id,s[1]);else m.onclick=function(){buzz();send('press',K(id,s[1]),id)};t.appendChild(m)});p.lastChild.appendChild(t)}
+  else p.lastChild.appendChild(kb(b))});$('pls').appendChild(p)});
+mantener($('pau'),PAUSA.t,PAUSA.k);
+function abrir(o){document.getElementById('stage').classList.toggle('open',o);esp({menu:o?1:0})}
+$('mnd').onclick=function(){abrir(true)};$('cls').onclick=$('shade').onclick=function(){abrir(false)};
+$('fs').onclick=function(){var d=document,e=d.documentElement;try{if(d.fullscreenElement||d.webkitFullscreenElement)(d.exitFullscreen||d.webkitExitFullscreen).call(d);else(e.requestFullscreen||e.webkitRequestFullscreen).call(e)}catch(_){}};
+document.addEventListener('contextmenu',function(e){e.preventDefault()});
+
+/* ---------- escala 1280×720 ---------- */
+function ajustar(){var w=innerWidth,h=innerHeight,s=Math.min(w/1280,h/720),st=$('stage'),t='translate('+((w-1280*s)/2)+'px,'+((h-720*s)/2)+'px) scale('+s+')';st.style.webkitTransform=t;st.style.transform=t}
+addEventListener('resize',ajustar);addEventListener('orientationchange',function(){setTimeout(ajustar,200)});
+
+
+
+/* ---------- pantallas ---------- */
+var VW=[['Principal','p0'],['Camión','p1'],['Ruta','p2'],['Inclinación','p3']],pgi=0;
+function irPag(n){pgi=(n+VW.length)%VW.length;VW.forEach(function(v,i){$(v[1]).classList.toggle('on',i==pgi)});$('vw').textContent=VW[pgi][0]+' · '+(pgi+1)+'/'+VW.length;esp({pag:pgi})}
+$('vw').onclick=function(){irPag(pgi+1)};
+var tx0=null;
+$('stage').addEventListener('touchstart',function(e){tx0=(e.target.closest&&e.target.closest('#drw'))?null:e.touches[0].clientX});
+$('stage').addEventListener('touchend',function(e){if(tx0==null)return;var dx=e.changedTouches[0].clientX-tx0;tx0=null;if(Math.abs(dx)>90&&!$('stage').classList.contains('open'))irPag(pgi+(dx<0?1:-1))});
+mk('bF',[['c_fu','Combustible'],['c_ab','AdBlue'],['c_ai','Aire']]);
+mk('bD',[['c_we','Motor'],['c_wt','Transmisión'],['c_wc','Chasis'],['c_ww','Neumáticos'],['c_wr','Remolque']]);
+mk('bB',[['c_fe','Eficacia'],['c_fp','Pedal de freno'],['c_re','Retarder']]);
+var CH=[['Motor','gr',function(e){return e.motor}],['Eléctrico','cy',function(e){return e.electrico}],['Freno de mano','rd',function(e){return e.freno_mano}],['Luces','gr',function(e){return e.luces>0}],
+['Luces altas','bl',function(e){return e.altas}],['Emergencia','rd',function(e){return e.hazards}],['Torretas','am',function(e){return e.torretas}],['Limpiadores','cy',function(e){return e.limpiadores}],
+['Remolque','gr',function(e){return e.remolque}],['Freno de motor','am',function(e){return e.freno_motor}],['Crucero','gr',function(e){return e.crucero}]];
+CH.forEach(function(c,i){var d=document.createElement('div');d.className='chip';d.id='ch'+i;d.style.setProperty('--c','var(--'+c[1]+')');d.innerHTML='<i></i>'+c[0];$('chips').appendChild(d)});
+/* inclinómetro (±15°) */
+(function(){var h='',i,a,t,CXp=210,CYp=175;
+ function ar(r,a0,a1){var p=[CXp+r*Math.cos(a0*Math.PI/180),CYp+r*Math.sin(a0*Math.PI/180)],q=[CXp+r*Math.cos(a1*Math.PI/180),CYp+r*Math.sin(a1*Math.PI/180)];return'M'+p[0].toFixed(1)+' '+p[1].toFixed(1)+'A'+r+' '+r+' 0 0 1 '+q[0].toFixed(1)+' '+q[1].toFixed(1)}
+ function z(p0,p1,c){return'<path d="'+ar(140,270+4*p0,270+4*p1)+'" fill="none" stroke-width="14" style="stroke:var(--'+c+')" opacity=".85"/>'}
+ h+=z(-15,-5.1,'rd')+z(-5.1,-3.4,'am')+z(-3.4,3.4,'gr')+z(3.4,5.1,'am')+z(5.1,15,'rd');
+ for(i=-15;i<=15;i++){a=(270+4*i)*Math.PI/180;var m=i%5==0,r1=126,r2=m?108:116;
+  h+='<line x1="'+(CXp+r1*Math.cos(a)).toFixed(1)+'" y1="'+(CYp+r1*Math.sin(a)).toFixed(1)+'" x2="'+(CXp+r2*Math.cos(a)).toFixed(1)+'" y2="'+(CYp+r2*Math.sin(a)).toFixed(1)+'" style="stroke:var(--'+(m?'ink':'dim')+')" stroke-width="'+(m?3:1.5)+'"/>';
+  if(m&&i%5==0){h+='<text x="'+(CXp+92*Math.cos(a)).toFixed(1)+'" y="'+(CYp+92*Math.sin(a)+4).toFixed(1)+'" text-anchor="middle">'+(i>0?'+':'')+i+'°</text>'}}
+ h+='<text x="40" y="190">BAJADA</text><text x="380" y="190" text-anchor="end">SUBIDA</text><g id="pn"><line x1="210" y1="175" x2="210" y2="52" style="stroke:var(--ink)" stroke-width="4" stroke-linecap="round"/></g><circle cx="210" cy="175" r="9" style="fill:var(--ink)"/>';
+ $('pro').innerHTML=h;
+ $('spk').innerHTML='<line x1="0" x2="420" y1="50" y2="50" style="stroke:var(--ln)" stroke-width="1.5"/><line x1="0" x2="420" y1="25" y2="25" style="stroke:var(--ln)" stroke-dasharray="3 5"/><line x1="0" x2="420" y1="75" y2="75" style="stroke:var(--ln)" stroke-dasharray="3 5"/><text x="4" y="21">+6 %</text><text x="4" y="93">−6 %</text><polyline id="spL" fill="none" style="stroke:var(--cy)" stroke-width="2.5" stroke-linejoin="round" points="0,50 420,50"/>'})();
+/* ventana de inclinación (sin dibujos) */
+(function(){
+ var h='<defs><linearGradient id="rgd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--ac)" stop-opacity=".22"/><stop offset="1" style="stop-color:var(--ac)" stop-opacity="0"/></linearGradient></defs>'+
+ '<line x1="40" x2="760" y1="230" y2="230" style="stroke:var(--dim)" stroke-width="1.5" stroke-dasharray="3 7"/>'+
+ '<g id="wd"><rect x="-500" y="230" width="1800" height="700" fill="url(#rgd)"/><line class="rdl" x1="-500" x2="1300" y1="266" y2="266" style="stroke:var(--ac)" stroke-width="3" stroke-dasharray="30 30" opacity=".5"/><line x1="-500" x2="1300" y1="230" y2="230" style="stroke:var(--ac)" stroke-width="7" stroke-linecap="round"/></g>'+
+ '<circle cx="400" cy="230" r="11" style="fill:var(--ac)"/><circle cx="400" cy="230" r="5" style="fill:var(--pn)"/>'+
+ '<path id="arcI" fill="none" style="stroke:var(--ac)" stroke-width="3" d=""/><text id="arcT" x="760" y="262" text-anchor="end" font-size="26" font-weight="700" font-family="Bahnschrift,Segoe UI,sans-serif" style="fill:var(--ac)"></text>'+
+ '<text id="sd" x="40" y="385" font-size="16" letter-spacing="2" font-family="Bahnschrift,Segoe UI,sans-serif" style="fill:var(--dim)">PLANO</text>'+
+ '<text id="sdg" x="40" y="450" font-size="72" font-weight="500" font-family="Bahnschrift,Segoe UI,sans-serif" style="fill:var(--ac)">0.0°</text>'+
+ '<text x="760" y="450" text-anchor="end" font-size="13" font-family="Bahnschrift,Segoe UI,sans-serif" style="fill:var(--dim)">Línea punteada = nivel · ángulo dibujado ×2</text>';
+ $('scn').innerHTML=h})();
+function pm(t){var a=/(\d+)\s*h/.exec(t||''),b=/(\d+)\s*min/.exec(t||'');return(a||b)?(a?+a[1]*60:0)+(b?+b[1]:0):null}
+function fm(m){var h=Math.floor(m/60);return h?h+' h '+(m%60)+' min':m+' min'}
+var HIST=[],mu=0,md=0,maxD=0,rk='';
+$('rec').onclick=function(){mu=0;md=0};
+/* ---------- sonido de aviso (se activa con el primer toque a la pantalla) ---------- */
+var AC=null;
+function audio(){try{if(!AC){var A=window.AudioContext||window.webkitAudioContext;if(A)AC=new A()}if(AC&&AC.state=='suspended')AC.resume()}catch(_){}}
+['touchstart','mousedown','pointerdown','keydown'].forEach(function(n){document.addEventListener(n,audio,{passive:true})});
+function beep(t){if(!AC)return;try{var n=t==2?3:2,i;for(i=0;i<n;i++){var o=AC.createOscillator(),g=AC.createGain(),s=AC.currentTime+i*.28;o.type='square';o.frequency.value=t==2?880:660;g.gain.setValueAtTime(.0001,s);g.gain.exponentialRampToValueAtTime(.25,s+.02);g.gain.exponentialRampToValueAtTime(.0001,s+.2);o.connect(g);g.connect(AC.destination);o.start(s);o.stop(s+.22)}}catch(_){}}
+function AI(id,cl,tx){var k=cl+tx;if(C['a'+id]===k)return;C['a'+id]=k;var d=$(id);d.className='ai '+cl;d.lastChild.textContent=tx}
+function wc(x){return x>=50?'r':x>=20?'w':''}
+/* ---------- avisos de descenso / subida: suenan max. AV_MAX veces por situacion y se muestran sobre el GPS ---------- */
+var AV_BAJ_G=6,AV_BAJ_V=50,AV_BAJ_ACEL=5;      /* descenso: pendiente >= 6 grados, > 50 km/h y ganando >= 5 km/h en 3 s */
+var AV_SUB_G=6,AV_SUB_RPM=2100,AV_SUB_V=30;    /* subida: pendiente >= 6 grados, RPM en zona roja y menos de 30 km/h */
+var AV_MAX=2,AV_ENTRE=8000,AV_REARMA=5000,AV_CONF=1200;   /* max. sonidos, s entre ellos, s sin condicion para rearmar, s para confirmar */
+var AVS={b:{on:0,t0:0,n:0,u:0,off:0},s:{on:0,t0:0,n:0,u:0,off:0}},VH=[];
+var AV_BEEP=false;   /* true = ademas de la voz suena el pitido del tablero */
+var GFR=null;
+function gpsVel(v){try{if(!GFR||!GFR.contentWindow)GFR=document.querySelector('#gps iframe');if(GFR&&GFR.contentWindow)GFR.contentWindow.postMessage({gps:'vel',v:v},'*')}catch(_){}}   /* el GPS muestra los km/h con esta velocidad rapida */
+function gpsAviso(clave,activo){try{var fr=document.querySelector('#gps iframe');if(fr&&fr.contentWindow)fr.contentWindow.postMessage({gps:'aviso',clave:clave,activo:activo},'*')}catch(_){}}
+function avEst(k,cond,ahora){var a=AVS[k];
+ if(cond){a.off=0;if(!a.t0)a.t0=ahora;
+  if(ahora-a.t0>=AV_CONF){a.on=1;if(a.n<AV_MAX&&ahora-a.u>=AV_ENTRE){a.n++;a.u=ahora;if(AV_BEEP)beep(k=='b'?2:1)}}}
+ else{if(!a.off)a.off=ahora;a.t0=0;if(a.on&&ahora-a.off>=1500)a.on=0;if(ahora-a.off>=AV_REARMA)a.n=0}}
+function aviso(d,v,pd,ay){var ahora=Date.now(),act=!!d.conectado&&!d.pausado;
+ VH.push([ahora,v]);while(VH.length>1&&ahora-VH[0][0]>3000)VH.shift();
+ var gan=v-VH[0][1],rpm=num(d.rpm,0);
+ avEst('b',act&&pd<=-AV_BAJ_G&&v>=AV_BAJ_V&&gan>=AV_BAJ_ACEL&&!ay,ahora);
+ avEst('s',act&&pd>=AV_SUB_G&&rpm>=AV_SUB_RPM&&v<AV_SUB_V,ahora);
+ gpsAviso('inclinacion',!!AVS.s.on&&act);gpsAviso('freno',!!AVS.b.on&&act);   /* el GPS dice el aviso con voz de radio (max. 2 veces) */
+ var k=!act?'':AVS.b.on?'b':AVS.s.on?'s':'';
+ if(C.av!==k){C.av=k;var g=$('gal');if(!g)return;
+  if(k=='b'){g.className='on rd';g.innerHTML='<b>PELIGRO · DESCENSO RÁPIDO</b><small>Usa el freno de motor o el retarder</small>'}
+  else if(k=='s'){g.className='on';g.innerHTML='<b>SUBIDA PRONUNCIADA</b><small>Activa el bloqueo de diferencial (BLOQ DIF)</small>'}
+  else{g.className='';g.innerHTML=''}}}
+function aplicar2(d,e,v,pc,rs,T,tf,ef,L){
+ /* Camión */
+ var cap=num(d.cap,909),cb=num(d.comb,0),ai=num(d.aire,0),ad=num(d.adblue,0),rx=num(d.retarder_max,5)||5;
+ S('p1t','Camión · '+((d.marca||'')+' '+(d.modelo||'')).trim());
+ rb('c_fu',Math.round(cb)+' / '+Math.round(cap)+' L',cb/cap,cb/cap<.15?'r':'');rb('c_ab',Math.round(ad)+' L',ad/80,ad<8?'r':'');rb('c_ai',Math.round(ai)+' psi',ai/130,ai<60?'r':'');
+ [['c_we','w_eng'],['c_wt','w_tra'],['c_wc','w_cha'],['c_ww','w_whe'],['c_wr','w_trl']].forEach(function(p){var w=num(d[p[1]],0);rb(p[0],w.toFixed(1)+' %',w/100,wc(w))});
+ S('c_t',T.toFixed(0)+' °C');S('c_ts',T>=num(d.tmax,TM)?'¡Cristalizado! Sin frenos':T>=TP?'¡Peligro!':T>=tf?'Fading':'Óptimo');$('c_t').style.color=T>=TP?'var(--rd)':T>=tf?'var(--am)':'var(--ink)';
+ rb('c_fe',ef+' %',ef/100,ef<50?'r':ef<85?'w':'');rb('c_fp',Math.round(num(d.freno_pct,0))+' %',num(d.freno_pct,0)/100,'');rb('c_re',rs>0?rs+' / '+rx:'Apagado',rs/rx,'');
+ CH.forEach(function(c,i){var o=!!c[2](e),k='ch'+i+o;if(C[k])return;C['ch'+i+!o]=0;C[k]=1;$('ch'+i).classList.toggle('on',o)});
+ /* Ruta */
+ var dk=num(d.dist_km,0),key=(d.origen||'')+'>'+(d.destino||'');if(key!==rk){rk=key;maxD=0}if(dk>maxD)maxD=dk;var pr=maxD>0?Math.max(0,Math.min(1,1-dk/maxD)):0;
+ S('r_o',d.origen||'--');S('r_d',d.destino||'--');$('r_f').style.width=pr*100+'%';$('r_m').style.left=pr*100+'%';S('r_pc','Avance estimado '+Math.round(pr*100)+' % (desde que abriste el panel)');
+ S('r_k',dk.toFixed(0)+' km');S('r_e',d.eta||'--');var hc=d.peso>0;S('r_t',hc?(d.t_restante||'--'):'--');
+ var a=pm(d.t_restante),b=pm(d.eta);if(hc&&a!=null&&a>0&&b!=null){var hh=a-b;S('r_h',(hh>=0?'+':'−')+fm(Math.abs(hh)));$('r_h').style.color=hh>=0?'var(--gr)':'var(--rd)'}else{S('r_h','--');$('r_h').style.color='var(--ink)'}
+ S('r_c',(d.cargo||'--')+(d.peso>0?' · '+d.peso.toFixed(1)+' t':''));S('r_p','$'+num(d.ingresos,0).toLocaleString());S('r_s',d['sueño']||'--');S('r_v',Math.round(v)+' / '+(L>0?Math.round(L):'--')+' km/h');
+ /* Inclinación */
+ var pd=num(d.pitch_deg,0);if(pc>mu)mu=pc;if(-pc>md)md=-pc;
+ var ang=Math.max(-20,Math.min(20,-pd*2));$('wd').style.transform='rotate('+ang.toFixed(1)+'deg)';
+ var ar=ang*Math.PI/180,R=170;$('arcI').setAttribute('d',Math.abs(ang)<1?'':'M'+(400+R)+' 230A'+R+' '+R+' 0 0 '+(ang>0?1:0)+' '+(400+R*Math.cos(ar)).toFixed(1)+' '+(230+R*Math.sin(ar)).toFixed(1));
+ $('arcT').setAttribute('y',ang<0?266:206);S('arcT',Math.abs(pd)<.6?'':(pd>0?'+':'')+pd.toFixed(1)+'°');
+ $('pn').style.transform='rotate('+(Math.max(-15,Math.min(15,pd))*4).toFixed(1)+'deg)';
+ S('i_pc',(pc>0?'+':'')+pc.toFixed(1)+' %');S('i_dg',pd.toFixed(1)+'°');
+ var ds=Math.abs(pd)<0.6?'PLANO':pd>0?'SUBIDA':'BAJADA',ac=Math.abs(pc)>=9?'var(--rd)':Math.abs(pc)>=6?'var(--am)':'var(--gr)';S('i_ds',ds);$('i_ds').style.color=ac;$('i_pc').style.color=ac;
+ var ay=rs>0||e.freno_motor,ht='';if(pc<=-5)ht=ay?'Bajada: freno auxiliar activo':'Bajada fuerte: usa retarder o freno de motor';else if(pc>=7)ht='Subida fuerte: baja de marcha';if(pc<0&&T>=tf)ht='Frenos calientes en bajada: reduce velocidad';S('i_ht',ht);
+ aviso(d,v,pd,ay);
+ var al=C.av=='s'?1:C.av=='b'?2:0;
+ if(al!==C.al){C.al=al;var ab=$('alr');ab.className=al?(al==2?'on rd':'on'):'';ab.textContent=al==1?'SUBIDA PRONUNCIADA · USAR BLOQ DIF':al==2?'PELIGRO · DESCENSO RÁPIDO · USAR FRENO DE MOTOR':''}
+ S('i_mu','+'+mu.toFixed(1)+' %');S('i_md','−'+md.toFixed(1)+' %');S('i_lt',typeof d.roll_deg=='number'?(d.roll_deg>0?'+':'')+d.roll_deg.toFixed(1)+'°':'—');
+ if(Date.now()-(C.hT||0)>=HMS){C.hT=Date.now();HIST.push(pc);if(HIST.length>HN)HIST.shift();var pts=HIST.map(function(q,i){return(i*420/(HN-1)).toFixed(0)+','+(50-Math.max(-12,Math.min(12,q))*(4.2)).toFixed(1)}).join(' ');$('spL').setAttribute('points',pts.length?pts:'0,50 420,50')}
+ /* ventana de inclinación */
+ var sc=$('scn'),mv=v>=1&&!d.pausado;if(C.mv!==mv){C.mv=mv;sc.classList.toggle('mov',mv)}
+ var vv=Math.round(v/3);if(C.vv!==vv){C.vv=vv;sc.style.setProperty('--rl',Math.max(.15,60/(Math.max(v,1)*2.5)).toFixed(2)+'s')}
+ if(C.acc!==ac){C.acc=ac;sc.style.setProperty('--ac',ac)}
+ S('sd',ds);S('sdg',Math.abs(pd).toFixed(1)+'°');
+ AI('a_dif',al==1?'wr':'',al==1?'Recomendado':'No necesario');
+ AI('a_fm',e.freno_motor?'ok':al==2?'rd':'',e.freno_motor?'Activo':al==2?'Recomendado':'En espera');
+ AI('a_ret',rs>0?'ok':'',rs>0?'Nivel '+rs+' / '+rx:'Apagado');
+ AI('a_fr',T>=TP?'rd':T>=tf?'wr':'ok',T.toFixed(0)+' °C · '+(T>=TP?'Peligro':T>=tf?'Calientes':'Normal'));
+}
+
+/* ---------- datos ---------- */
+var ST={on:['var(--gr)','En línea'],wait:['var(--am)','Esperando al juego'],pause:['var(--am)','Juego en pausa'],off:['var(--rd)','Servidor sin conexión']};
+function est(m){if(C.m===m)return;C.m=m;$('st').style.setProperty('--c',ST[m][0]);$('st').lastChild.textContent=ST[m][1]}
+function aplicar(d){
+ est(!d.conectado?'wait':d.pausado?'pause':'on');
+ S('gclk','Juego '+(d.hora_juego||d.game_time||'--:--'));
+ var e=d.est||{},v=num(d.vel,0),L=num(d.limit,0),rpm=num(d.rpm,0);
+ if(d.conectado&&d.est){var f=JSON.stringify(e);if(f!==C.fe){C.fe=f;E=e;if(Date.now()>hasta){if(!E.limpiadores)nivel=0;else if(!nivel)nivel=1}ver.forEach(function(p){p()});pintarModo()}}
+ var fv=Math.min(1,v/VMAX),fr=Math.min(1,rpm/RMAX);
+ $('pS').style.strokeDasharray=fv*100+' 100';$('pR').style.strokeDasharray=fr*100+' 100';
+ $('nS').style.transform='rotate('+(135+130*fv).toFixed(1)+'deg)';$('nR').style.transform='rotate('+(405-130*fr).toFixed(1)+'deg)';
+ var ov=L>0&&v>L+3,hi=L>0&&v>L,cl=ov?'pg ov':hi?'pg hi':'pg';if(C.pc!==cl){C.pc=cl;$('pS').setAttribute('class',cl)}
+ var cr=rpm>2100?'pg ov':'pg';if(C.rc!==cr){C.rc=cr;$('pR').setAttribute('class',cr)}
+ S('tv',Math.round(v));gpsVel(v);S('tg',String(d.gear));
+ var lm=$('lm'),sg=$('sg');
+ if(L>0){lm.style.display='';lm.setAttribute('transform','rotate('+(135+130*Math.min(1,L/VMAX)).toFixed(1)+' 380 290)');sg.style.display='';S('sgt',Math.round(L));sg.setAttribute('class',ov?'ov':'')}else{lm.style.display='none';sg.style.display='none'}
+ var cc=!!e.crucero&&num(d.cc_speed,0)>0;S('tcl',cc?'CRUCERO':'');S('tcc',cc?Math.round(d.cc_speed):'');$('tcc').style.fill='var(--gr)';
+ /* inclinación */
+ var pd=d.pitch_deg,pc=0;
+ if(typeof pd=='number')pc=Math.tan(pd*Math.PI/180)*100;
+ var dur=v<1?0:Math.max(.25,26/v/.9).toFixed(2);if(C.du!==dur){C.du=dur;$('rdc').style.animation=dur?'mv '+dur+'s linear infinite':'none';C.ps=null}
+ var ps=d.pausado?'paused':'running';if(C.ps!==ps){C.ps=ps;$('rdc').style.animationPlayState=ps}
+ /* filas */
+ var cap=num(d.cap,909),cb=num(d.comb,0),ai=num(d.aire,0),ad=num(d.adblue,0),rs=num(d.retarder,0),rx=num(d.retarder_max,5)||5;
+ rb('fu',Math.round(cb/cap*100)+'% · '+Math.round(cb)+' L',cb/cap,cb/cap<.15?'r':'');
+ consumo(d,cb);
+ rb('ab',Math.round(ad)+' L',ad/80,ad<8?'r':'');
+ rb('ai',Math.round(ai)+' psi',ai/130,ai<60?'r':'');
+ var T=num(d.temp,25),tf=num(d.tfade,TF),tm=num(d.tmax,TM),ef=Math.round(Math.max(0,Math.min(1,1-(T-tf)/(tm-tf)))*100);
+ rb('fr',T.toFixed(0)+' °C'+(T>=tf?' · '+ef+'%':''),(T-25)/(tm-25),T>=TP?'r':T>=tf?'w':'');
+ document.body.classList.toggle('hot',T>=TP&&!!d.conectado);
+ rb('cc',cc?Math.round(d.cc_speed)+' km/h':'Apagado',null,'');
+ rb('re',rs>0?rs+' / '+rx:'Apagado',rs/rx,'');
+ rb('ct',d.t_restante||'--',null,'');rb('ds',d['sueño']||'--',null,'');
+ rb('dn',[d.w_eng,d.w_tra,d.w_cha,d.w_whe,d.w_trl].map(function(x){return Math.round(num(x,0))}).join('/')+' %',null,'');
+ rb('pa','$'+num(d.ingresos,0).toLocaleString(),null,'');
+ /* testigos */
+ TL.forEach(function(t){if(t[3])tl(t[0],!!t[3](e),t[0]=='il'||t[0]=='ir'||(t[0]=='em'))});
+ tl('ret',rs>0,0);S('tlret',rs>0?'R'+rs:'RET');
+ S('trk',((d.marca||'')+' '+(d.modelo||'')).trim()||'--');S('jc',(d.cargo||'--')+(d.peso>0?' · '+d.peso.toFixed(1)+' t':''));S('jr',(d.origen||'--')+' → '+(d.destino||'--'));
+ llegada(d);
+ aplicar2(d,e,v,pc,rs,T,tf,ef,L);
+}
+/* km y tiempo REALES (aprox.): el juego escala la distancia ESC_KM veces y el tiempo segun game.timeScale (d.tscale; si falta, ESC_KM) */
+var ESC_KM=20;
+/* consumo: promedio km/L sobre una ventana de ~10 km. El valor MOSTRADO solo se actualiza cada CO_UPD km recorridos (no a cada instante).
+   Autonomia = combustible actual x promedio. Si hay ruta, la barra compara la autonomia con los km que faltan (roja = no alcanza). Si se carga combustible, reinicia */
+var CO={p:[],v:null,u:0},CO_KM=10,CO_UPD=2;
+function consumo(d,cb){var o=d.odo,t='-- km/L',a='-- km',f=null,c='';
+ if(typeof o=='number'&&isFinite(o)){var p=CO.p,u=p.length?p[p.length-1]:null;
+  if(!u||cb>u[1]+0.5||o<u[0]-0.01){CO.p=p=[[o,cb]];CO.v=null;CO.u=0}else if(o-u[0]>=0.2)p.push([o,cb]);
+  while(p.length>2&&o-p[1][0]>=CO_KM)p.shift();
+  var km=o-p[0][0],l=p[0][1]-cb;
+  if(km>=1&&l>0.05&&(CO.v==null||o-CO.u>=CO_UPD)){CO.v=km/l;CO.u=o}}
+ if(CO.v!=null){t=CO.v.toFixed(1)+' km/L';var au=cb*CO.v,dk=num(d.dist_km,0),cap=num(d.cap,909)||909;a=Math.round(au)+' km';
+  if(dk>0){f=Math.min(1,au/dk);c=au<dk?'r':''}else{f=Math.min(1,cb/cap);c=au<100?'r':''}}
+ rb('co',t,null,'');rb('au',a,f,c)}
+var ESC_T=20;
+function llegada(d){var dk=num(d.dist_km,0),ts=ESC_T,kr=dk/ESC_KM,m=pm(d.eta);
+ S('jk',dk>0?dk.toFixed(0)+' km':'--');S('jk2',dk>0?' / '+(kr<10?kr.toFixed(1):kr.toFixed(0))+' km':'');
+ S('je',d.eta||'--');S('je2',m!=null&&m>0?' / '+fm(Math.max(1,Math.round(m/ts))):'')}
+var st0=document.createElement('style');document.head.appendChild(st0);
+/* ---------- ciclo ---------- */
+function espSync(e){var on=!!e;if(on&&!ESPON){ESPON=true;esp({pag:pgi,menu:$('stage').classList.contains('open')?1:0,nivel:nivel,loc:locStr(),full:(window.espFull&&espFull())?1:0});if(window.espGps)espGps({gps:'reanuncia'})}else if(!on)ESPON=false}
+function espDestino(){if(window.espGps)espGps({gps:'destino-espejo',dest:ESPD})}
+if(ESPEJO)setInterval(function(){if(ESPD)espDestino()},3000);
+function espRecibir(s){if(!s)return;var cam=false;
+ if(s.pag!=null&&s.pag!==pgi)irPag(s.pag);
+ var m=!!s.menu;if(m!==$('stage').classList.contains('open'))abrir(m);
+ if((s.loc||'')!==ESPL){ESPL=s.loc||'';LOC={};if(ESPL)ESPL.split('|').forEach(function(i){LOC[i]=true});cam=true}
+ if(s.nivel!==ESPV){ESPV=s.nivel;nivel=s.nivel||0;hasta=Date.now()+900;cam=true}
+ if(cam)ver.forEach(function(p){p()});
+ if(s.full!=null&&s.full!==ESPF){ESPF=s.full;if(window.espSetFull)espSetFull(!!s.full)}
+ if((s.dest||'')!==ESPD){ESPD=s.dest||'';espDestino()}
+ if(ESPN===null){ESPN=s.n;return}
+ if(s.n!==ESPN){ESPN=s.n;var ev=s.ev,el=ev&&BTN[ev.b];if(el){if(ev.d==1)el.classList.add('p');else if(ev.d==0)el.classList.remove('p');else{el.classList.add('p');setTimeout(function(){el.classList.remove('p')},250)}}}}
+function ciclo(){
+ if(document.hidden){setTimeout(ciclo,1000);return}
+ var x=new XMLHttpRequest(),ok1=false,pz=false;
+ function sig(ok){if(ok1)return;ok1=true;if(!ok)est('off');setTimeout(ciclo,ok?(pz?POLLP:POLL):1500)}
+ x.open('GET','/data?_='+Date.now()+(ESPEJO?'&espejo=1':''),true);x.timeout=1500;
+ x.onload=function(){try{var dd=JSON.parse(x.responseText);pz=!!dd.pausado;if(ESPEJO)espRecibir(dd.esp);else espSync(dd.esp);aplicar(dd);sig(true)}catch(_){sig(false)}};
+ x.onerror=x.ontimeout=function(){sig(false)};x.send()}
+function reloj(){var d=new Date(),h=d.getHours(),m=d.getMinutes();S('clk',(h<10?'0':'')+h+':'+(m<10?'0':'')+m);pintarModo()}
+var mp=/[?&]p=(\d)/.exec(location.search);if(mp)irPag(+mp[1]);
+setInterval(reloj,5000);reloj();pintarModo();ajustar();setTimeout(ajustar,300);ciclo();
+</script></body></html>
