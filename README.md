@@ -7,6 +7,28 @@ Dos herramientas gratuitas para jugar American Truck Simulator (ATS) con más re
 
 > Probado en ATS con el Kenworth W900, el Freightliner Cascadia y el mapa **Reforma**. Otros camiones funcionan: la fuerza de frenado de cada camión, remolque y carga se aprende sola mientras manejas.
 
+
+
+## Capturas
+
+**Tablero para tablet con GPS**, en modo día y modo noche (así se ve la ruta siempre en el tablero):
+
+| Modo día | Modo noche |
+|---|---|
+| ![Tablero con GPS, modo día](capturas/tablero_dia.png) | ![Tablero con GPS, modo noche](capturas/tablero_noche.png) |
+
+**Mandos del camión** desde la tablet:
+
+![Mandos del camión](capturas/tablero_mandos.png)
+
+**Termofreno en la PC**:
+
+| Inicio | Ajustes de frenos |
+|---|---|
+| ![Ventana principal de Termofreno](capturas/termofreno_inicio.png) | ![Pestaña Frenos](capturas/termofreno_frenos.png) |
+
+<sub>Capturas hechas con datos de demostración (sin el juego abierto), con el mapa Reforma.</sub>
+
 ---
 
 ## Descarga
