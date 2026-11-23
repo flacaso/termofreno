@@ -32,7 +32,9 @@ if not exist version_info.txt (
 echo.
 echo [1/5] Creando entorno limpio (.venv_build)...
 if exist .venv_build rmdir /s /q .venv_build
-py -m venv .venv_build || goto :error
+rem   Python 3.13: con 3.15 PyInstaller no empaqueta bien Tcl/Tk 9 (falta zlib1.dll y el exe no abre)
+py -3.13 --version >nul 2>&1 || (echo Falta Python 3.13. Instalalo desde python.org ^(sin quitar el que ya tienes^). & goto :error)
+py -3.13 -m venv .venv_build || goto :error
 call .venv_build\Scripts\activate.bat || goto :error
 python -m pip install --upgrade pip || goto :error
 pip install pyinstaller pywebview pystray pillow requests pyvjoy inputs segno || goto :error
